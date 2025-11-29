@@ -177,3 +177,6 @@ INSERT INTO PEER_REVIEW (ID_Review, ID_Karya, ID_Layanan, ID_User, ID_Mentor, St
 ('R003', 'K003', 'L001', 'U002', 'M001', 'Selesai'),
 ('R004', 'K004', 'L004', 'U005', 'M002', 'Selesai'),
 ('R005', 'K005', 'L004', 'U003', 'M005', 'Menunggu');
+
+-- (Tambahan) PENGUMPULAN KARYA
+ALTER TABLE KARYA ADD COLUMN File_Karya VARCHAR(255);
