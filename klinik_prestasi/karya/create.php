@@ -6,22 +6,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $judul = $_POST['judul'];
     $id_user = $_POST['id_user'];
     $bidang = $_POST['bidang'];
+    $link_drive = $_POST['link_drive']; // Ambil link dari input
 
     if (!empty($id_karya) && !empty($judul)) {
-        $query = "INSERT INTO KARYA (ID_Karya, Judul_Karya, ID_User, Bidang_Karya) VALUES ($1, $2, $3, $4)";
-        $params = array($id_karya, $judul, $id_user, $bidang);
+        // Kita simpan Link ke kolom File_Karya
+        $query = "INSERT INTO KARYA (ID_Karya, Judul_Karya, ID_User, Bidang_Karya, File_Karya) VALUES ($1, $2, $3, $4, $5)";
+        $params = array($id_karya, $judul, $id_user, $bidang, $link_drive);
         
         $result = pg_query_params($conn, $query, $params);
 
         if ($result) {
             echo "<script>alert('Karya berhasil ditambahkan!'); window.location='index.php';</script>";
         } else {
-            $error = pg_last_error($conn);
-            echo "<script>alert('Gagal menambah data: $error');</script>";
+            echo "<script>alert('Gagal: " . pg_last_error($conn) . "');</script>";
         }
     }
 }
-
 include '../layout/header.php';
 ?>
 
@@ -45,10 +45,12 @@ include '../layout/header.php';
             <option value="Design">Design</option>
         </select>
 
-        <br>
+        <label>Link Google Drive</label>
+        <input type="url" name="link_drive" required placeholder="https://drive.google.com/..." style="border: 1px solid #28a745;">
+
+        <br><br>
         <button type="submit" class="btn btn-green">Simpan</button>
         <a href="index.php" class="btn btn-gray">Batal</a>
     </form>
 </div>
-
 <?php include '../layout/footer.php'; ?>
