@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Klinik Prestasi</title>
+    <title>Portal Mentor - Klinik Prestasi</title>
     <style>
         body { font-family: sans-serif; margin: 20px; color: #333; }
         h1, h2, h3 { color: #444; }
@@ -26,19 +26,17 @@
         input, select { padding: 8px; margin-bottom: 10px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         label { font-weight: bold; display: block; margin-bottom: 5px; margin-top: 10px; }
         
-        /* Navigation Styles */
-        .nav { margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; border-radius: 5px; }
-        .nav strong { margin-right: 10px; }
-        .nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #007bff; }
-        .nav a:hover { text-decoration: underline; color: #0056b3; }
+        /* Navigation Styles (Warna Berbeda untuk Mentor) */
+        .nav { margin-bottom: 20px; padding: 10px; background-color: #e3f2fd; border-bottom: 2px solid #2196F3; border-radius: 5px; }
+        .nav strong { margin-right: 10px; color: #0d47a1; }
+        .nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #1976D2; }
+        .nav a:hover { text-decoration: underline; color: #0d47a1; }
     </style>
 </head>
 <body>
     <div class="nav">
-        <strong>Menu Admin:</strong>
-        <a href="../index.php">🏠 Home</a>
-        <a href="../mahasiswa/index.php">Data Mahasiswa</a>
-        <a href="../karya/index.php">Data Karya</a>
+        <strong>Menu Mentor:</strong>
+        <a href="../index_mentor.php">🏠 Dashboard Mentor</a>
+        <a href="../peer_review/index.php">✅ Peer Review</a>
+        <a href="../laporan_review/index.php">📝 Laporan Review</a>
     </div>
-</body>
-</html>

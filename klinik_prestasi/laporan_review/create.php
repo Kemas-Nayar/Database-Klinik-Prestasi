@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-include '../layout/header.php';
+include '../layout/header_mentor.php';
 ?>
 
 <h2>Buat Laporan Review</h2>
