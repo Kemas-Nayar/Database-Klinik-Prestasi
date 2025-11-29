@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-include '../layout/header_mentor.php';
+include '../layout/header.php';
 ?>
 
 <h2>Tambah Peer Review</h2>

@@ -27,7 +27,7 @@ $data = pg_fetch_assoc(pg_query_params($conn, $query_get, array($id_url)));
 if (!$data) die("Data tidak ditemukan.");
 $data = array_change_key_case($data, CASE_UPPER);
 
-include '../layout/header_mentor.php';
+include '../layout/header.php';
 ?>
 
 <h2>Edit Peer Review</h2>

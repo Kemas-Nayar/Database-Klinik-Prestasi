@@ -1,6 +1,6 @@
 <?php
 include '../config/db.php';
-include '../layout/header_mentor.php';
+include '../layout/header.php';
 ?>
 
 <h2>Data Peer Review</h2>
