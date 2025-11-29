@@ -32,5 +32,11 @@
         <a href="peer_review/index.php">✅ Peer Review</a>
         <span>Kelola status review, mentor, dan layanan.</span>
     </div>
+
+    <div class="menu-box">
+        <!-- Link ke folder laporan_review -->
+        <a href="laporan_review/index.php">📝 Laporan Review</a>
+        <span>Lihat hasil dan feedback review karya.</span>
+    </div>
 </body>
 </html>
