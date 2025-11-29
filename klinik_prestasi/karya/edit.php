@@ -9,17 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $judul = $_POST['judul'];
     $id_user = $_POST['id_user'];
     $bidang = $_POST['bidang'];
+    $link_drive = $_POST['link_drive']; // Ambil link baru
 
-    $query = "UPDATE KARYA SET Judul_Karya=$1, ID_User=$2, Bidang_Karya=$3 WHERE ID_Karya=$4";
-    $result = pg_query_params($conn, $query, array($judul, $id_user, $bidang, $id_old));
+    // Update query termasuk kolom File_Karya (untuk Link)
+    $query = "UPDATE KARYA SET Judul_Karya=$1, ID_User=$2, Bidang_Karya=$3, File_Karya=$4 WHERE ID_Karya=$5";
+    $params = array($judul, $id_user, $bidang, $link_drive, $id_old);
+    
+    $result = pg_query_params($conn, $query, $params);
 
     if ($result) {
-        echo "<script>alert('Data berhasil diubah!'); window.location='index.php';</script>";
+        echo "<script>alert('Data karya berhasil diperbarui!'); window.location='index.php';</script>";
     } else {
         echo "<script>alert('Gagal mengubah data.');</script>";
     }
 }
 
+// Ambil data lama
 $query_get = "SELECT * FROM KARYA WHERE ID_Karya = $1";
 $data = pg_fetch_assoc(pg_query_params($conn, $query_get, array($id_url)));
 if (!$data) die("Data tidak ditemukan.");
@@ -50,7 +55,11 @@ include '../layout/header.php';
             <option value="Design" <?= ($data['BIDANG_KARYA']=='Design')?'selected':'' ?>>Design</option>
         </select>
 
-        <br>
+        <label>Link Google Drive</label>
+        <!-- Menampilkan link lama di value -->
+        <input type="url" name="link_drive" value="<?= isset($data['FILE_KARYA']) ? $data['FILE_KARYA'] : '' ?>" placeholder="https://drive.google.com/..." style="border: 1px solid #28a745;">
+
+        <br><br>
         <button type="submit" class="btn btn-blue">Update</button>
         <a href="index.php" class="btn btn-gray">Batal</a>
     </form>
