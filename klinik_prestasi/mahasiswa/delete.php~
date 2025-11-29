@@ -1,0 +1,20 @@
+<?php
+include '../config/db.php';
+
+if (isset($_GET['nim'])) {
+    $nim = $_GET['nim'];
+
+    // Gunakan Parameter Binding untuk keamanan
+    $query = "DELETE FROM MAHASISWA WHERE NIM = $1";
+    $result = pg_query_params($conn, $query, array($nim));
+
+    if ($result) {
+        // Redirect kembali ke index dengan pesan sukses (bisa ditambahkan parameter msg)
+        echo "<script>alert('Data berhasil dihapus.'); window.location='index.php';</script>";
+    } else {
+        echo "<script>alert('Gagal menghapus data. Mungkin data sedang digunakan di tabel lain.'); window.location='index.php';</script>";
+    }
+} else {
+    header("Location: index.php");
+}
+?>

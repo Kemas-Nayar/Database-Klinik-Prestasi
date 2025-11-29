@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Utama</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; text-align: center; }
+        .menu-box { display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; width: 200px; background: #f9f9f9; border-radius: 8px; }
+        a { text-decoration: none; font-weight: bold; color: #007bff; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Selamat Datang di Klinik Prestasi</h1>
+    <p>Silakan pilih menu di bawah ini:</p>
+
+    <div class="menu-box">
+        <a href="mahasiswa/index.php">📦 Data Mahasiswa</a>
+    </div>
+
+    <div class="menu-box">
+        <a href="#">📄 Data Karya</a><br>
+        <small>(Belum dibuat)</small>
+    </div>
+
+    <div class="menu-box">
+        <a href="#">✅ Peer Review</a><br>
+        <small>(Belum dibuat)</small>
+    </div>
+</body>
+</html>
