@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $angkatan = $_POST['angkatan'];
     $kontak = $_POST['kontak'];
     
-    // Kita buat ID User sederhana, misal "U" + digit terakhir NIM atau input manual
+    // Kita buat ID User sederhana atau input manual
     $id_user = $_POST['id_user'];
 
     // Validasi Sederhana
@@ -16,10 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // --- VALIDASI CONSTRAINT (MANUAL CHECK) ---
 
-        // 1. Cek Panjang Digit NIM (Constraint Jumlah Digit)
-        // Sesuaikan angka 9 dengan standar kampus Anda
-        if (strlen($nim) !== 9) {
-            echo "<script>alert('Gagal: Panjang NIM harus tepat 9 karakter (Contoh: F20000001)!'); window.history.back();</script>";
+        // 1. Cek Panjang Digit NIM (WAJIB 11 DIGIT)
+        if (strlen($nim) !== 11) {
+            echo "<script>alert('Gagal: Panjang NIM harus tepat 11 karakter (Contoh: F2000000001)!'); window.history.back();</script>";
             exit; // Stop proses di sini
         }
 
@@ -27,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $cek_nim = pg_query_params($conn, "SELECT NIM FROM MAHASISWA WHERE NIM = $1", array($nim));
         if (pg_num_rows($cek_nim) > 0) {
             echo "<script>alert('Gagal: NIM $nim sudah terdaftar! Gunakan NIM lain.'); window.history.back();</script>";
-            exit; // Stop proses di sini
+            exit;
         }
 
         // 3. Cek Apakah ID User Sudah Ada?
         $cek_user = pg_query_params($conn, "SELECT ID_User FROM USER_MEMBER WHERE ID_User = $1", array($id_user));
         if (pg_num_rows($cek_user) > 0) {
             echo "<script>alert('Gagal: ID User $id_user sudah digunakan! Gunakan ID lain.'); window.history.back();</script>";
-            exit; // Stop proses di sini
+            exit;
         }
 
         // --- MULAI TRANSAKSI ---
@@ -46,16 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $res_mhs = pg_query_params($conn, $query_mhs, $params_mhs);
 
         // 5. Insert ke Tabel USER_MEMBER
+        // PERBAIKAN: Menghapus kolom 'password' karena belum ada di database Anda
         $query_user = "INSERT INTO USER_MEMBER (ID_User, NIM) VALUES ($1, $2)";
         $params_user = array($id_user, $nim);
         $res_user = pg_query_params($conn, $query_user, $params_user);
 
         if ($res_mhs && $res_user) {
-            // Jika kedua insert sukses, simpan permanen (COMMIT)
             pg_query($conn, "COMMIT");
-            echo "<script>alert('Mahasiswa DAN User berhasil ditambahkan! ID User Anda: $id_user'); window.location='index.php';</script>";
+            echo "<script>alert('Mahasiswa berhasil ditambahkan! NIM: $nim'); window.location='index.php';</script>";
         } else {
-            // Jika ada error, batalkan semua (ROLLBACK)
             pg_query($conn, "ROLLBACK");
             $error = pg_last_error($conn);
             echo "<script>alert('Gagal menambah data: $error');</script>";
@@ -73,7 +71,7 @@ include '../layout/header.php';
     <form action="" method="POST">
         <h3>Data Pribadi</h3>
         <label>NIM</label>
-        <input type="text" name="nim" required placeholder="Contoh: F20001 (Wajib 9 Digit)">
+        <input type="text" name="nim" required placeholder="Contoh: F2000000001 (Wajib 11 Digit)">
 
         <label>Nama Lengkap</label>
         <input type="text" name="nama" required placeholder="Nama Mahasiswa">
@@ -93,9 +91,6 @@ include '../layout/header.php';
         <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ccc;">
 
         <h3>Data Akun User</h3>
-        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
-            ID User ini nantinya digunakan untuk input <strong>Karya</strong>.
-        </p>
         <label>ID User (Buat Baru)</label>
         <input type="text" name="id_user" required placeholder="Contoh: U001">
 
