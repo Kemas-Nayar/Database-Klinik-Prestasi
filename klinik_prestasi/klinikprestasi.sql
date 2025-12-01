@@ -1,11 +1,12 @@
 -- ==========================================
--- FILE DATABASE: klinikprestasi.sql
--- Database: PostgreSQL
+-- FINAL DATABASE SCRIPT: KLINIK PRESTASI
+-- Database Engine: PostgreSQL
+-- Updated: Mencakup fitur Link Drive, Password, & Gabungan Review
 -- ==========================================
 
--- 1. BERSIHKAN TABEL LAMA
+-- 1. BERSIHKAN TABEL LAMA (Urutan penting karena Foreign Key)
+DROP TABLE IF EXISTS LAPORAN_REVIEW CASCADE; -- Tabel lama dihapus
 DROP TABLE IF EXISTS LAPORAN_LAYANAN CASCADE;
-DROP TABLE IF EXISTS LAPORAN_REVIEW CASCADE;
 DROP TABLE IF EXISTS PEER_REVIEW CASCADE;
 DROP TABLE IF EXISTS KARYA CASCADE;
 DROP TABLE IF EXISTS LAYANAN CASCADE;
@@ -16,69 +17,71 @@ DROP TABLE IF EXISTS MAHASISWA CASCADE;
 
 -- 2. MEMBUAT TABEL (DDL)
 
--- Tabel MAHASISWA (NIM 11 Digit)
+-- Tabel MAHASISWA
 CREATE TABLE MAHASISWA (
-    NIM CHAR(11) NOT NULL PRIMARY KEY,
+    NIM CHAR(10) NOT NULL PRIMARY KEY,
     Nama VARCHAR(50) NOT NULL,
     Angkatan CHAR(3) NOT NULL,
     Kontak VARCHAR(30) NOT NULL,
-    CONSTRAINT chk_angkatan CHECK (Angkatan IN ('F19', 'F20', 'F21', 'F22'))
+    CONSTRAINT chk_angkatan CHECK (Angkatan IN ('F19', 'F20', 'F21', 'F22', 'F23'))
 );
 
--- Tabel USER_MEMBER (ID 4 Digit: U001)
--- Kolom password DIHAPUS sesuai permintaan
+-- Tabel USER_MEMBER (Ditambah kolom Password)
 CREATE TABLE USER_MEMBER (
-    ID_User CHAR(4) NOT NULL PRIMARY KEY,
-    NIM CHAR(11) NOT NULL UNIQUE,
+    ID_User CHAR(10) NOT NULL PRIMARY KEY,
+    NIM CHAR(10) NOT NULL UNIQUE,
+    password VARCHAR(255) DEFAULT '12345', -- Default password
     FOREIGN KEY (NIM) REFERENCES MAHASISWA(NIM) ON DELETE CASCADE
 );
 
--- Tabel MENTOR (ID 4 Digit: M001)
+-- Tabel MENTOR
 CREATE TABLE MENTOR (
-    ID_Mentor CHAR(4) NOT NULL PRIMARY KEY,
-    ID_User CHAR(4) NOT NULL UNIQUE,
-    NIM CHAR(11) NOT NULL UNIQUE,
+    ID_Mentor CHAR(10) NOT NULL PRIMARY KEY,
+    ID_User CHAR(10) NOT NULL UNIQUE,
+    NIM CHAR(10) NOT NULL UNIQUE,
     Bidang_Keahlian VARCHAR(50),
     FOREIGN KEY (ID_User) REFERENCES USER_MEMBER(ID_User) ON DELETE CASCADE,
     FOREIGN KEY (NIM) REFERENCES MAHASISWA(NIM) ON DELETE CASCADE
 );
 
--- Tabel ADMIN (ID 4 Digit: A001)
+-- Tabel ADMIN
 CREATE TABLE ADMIN (
-    ID_Admin CHAR(4) NOT NULL PRIMARY KEY,
-    ID_User CHAR(4) NOT NULL UNIQUE,
-    NIM CHAR(11) NOT NULL UNIQUE,
+    ID_Admin CHAR(10) NOT NULL PRIMARY KEY,
+    ID_User CHAR(10) NOT NULL UNIQUE,
+    NIM CHAR(10) NOT NULL UNIQUE,
     Jabatan VARCHAR(30) NOT NULL,
     FOREIGN KEY (ID_User) REFERENCES USER_MEMBER(ID_User) ON DELETE CASCADE,
     FOREIGN KEY (NIM) REFERENCES MAHASISWA(NIM) ON DELETE CASCADE,
     CONSTRAINT chk_jabatan CHECK (Jabatan IN ('Ketua Divisi', 'Sekbend', 'Anggota'))
 );
 
--- Tabel LAYANAN (ID 4 Digit: L001)
+-- Tabel LAYANAN
 CREATE TABLE LAYANAN (
-    ID_Layanan CHAR(4) NOT NULL PRIMARY KEY,
+    ID_Layanan CHAR(10) NOT NULL PRIMARY KEY,
     Nama_Layanan VARCHAR(50) NOT NULL
 );
 
--- Tabel KARYA (ID 4 Digit: K001)
+-- Tabel KARYA (Ditambah kolom File_Karya untuk Link Drive)
 CREATE TABLE KARYA (
-    ID_Karya CHAR(4) NOT NULL PRIMARY KEY,
-    ID_User CHAR(4) NOT NULL,
+    ID_Karya CHAR(10) NOT NULL PRIMARY KEY,
+    ID_User CHAR(10) NOT NULL,
     Judul_Karya VARCHAR(100) NOT NULL,
     Bidang_Karya VARCHAR(10) NOT NULL,
-    File_Karya VARCHAR(255), -- Tetap dipertahankan untuk menyimpan Link Drive
+    File_Karya VARCHAR(255), -- Menyimpan Link Google Drive
     FOREIGN KEY (ID_User) REFERENCES USER_MEMBER(ID_User) ON DELETE CASCADE,
     CONSTRAINT chk_bidang_karya CHECK (Bidang_Karya IN ('Esai', 'KTI', 'Bisnis', 'Design'))
 );
 
--- Tabel PEER_REVIEW (ID 4 Digit: R001)
+-- Tabel PEER_REVIEW (Digabung dengan Hasil Review)
 CREATE TABLE PEER_REVIEW (
-    ID_Review CHAR(4) NOT NULL PRIMARY KEY,
-    ID_Karya CHAR(4) NOT NULL,
-    ID_Layanan CHAR(4) NOT NULL,
-    ID_User CHAR(4) NOT NULL,
-    ID_Mentor CHAR(4) NOT NULL,
+    ID_Review CHAR(10) NOT NULL PRIMARY KEY,
+    ID_Karya CHAR(10) NOT NULL,
+    ID_Layanan CHAR(10) NOT NULL,
+    ID_User CHAR(10) NOT NULL,   -- Mahasiswa yang meminta review
+    ID_Mentor CHAR(10) NOT NULL, -- Mentor yang mereview
     Status_Review VARCHAR(30) NOT NULL,
+    Hasil_Review TEXT,           -- Kolom baru: Feedback Mentor
+    Tanggal_Review DATE,         -- Kolom baru: Tanggal Selesai
     FOREIGN KEY (ID_Karya) REFERENCES KARYA(ID_Karya) ON DELETE CASCADE,
     FOREIGN KEY (ID_Layanan) REFERENCES LAYANAN(ID_Layanan),
     FOREIGN KEY (ID_User) REFERENCES USER_MEMBER(ID_User),
@@ -86,25 +89,11 @@ CREATE TABLE PEER_REVIEW (
     CONSTRAINT chk_status_review CHECK (Status_Review IN ('Menunggu', 'Selesai'))
 );
 
--- Tabel LAPORAN_REVIEW (ID 5 Digit: LR001)
-CREATE TABLE LAPORAN_REVIEW (
-    ID_Laporan_Review CHAR(5) NOT NULL PRIMARY KEY,
-    ID_Karya CHAR(4) NOT NULL,
-    ID_User CHAR(4) NOT NULL,
-    ID_Mentor CHAR(4) NOT NULL,
-    Hasil_Review TEXT,
-    Tanggal_Laporan DATE NOT NULL,
-    FOREIGN KEY (ID_Karya) REFERENCES KARYA(ID_Karya) ON DELETE CASCADE,
-    FOREIGN KEY (ID_User) REFERENCES USER_MEMBER(ID_User),
-    FOREIGN KEY (ID_Mentor) REFERENCES MENTOR(ID_Mentor),
-    CONSTRAINT chk_tgl_laporan_review CHECK (Tanggal_Laporan <= CURRENT_DATE)
-);
-
--- Tabel LAPORAN_LAYANAN (ID 5 Digit: LL001)
+-- Tabel LAPORAN_LAYANAN (Opsional, untuk admin)
 CREATE TABLE LAPORAN_LAYANAN (
-    ID_Laporan CHAR(5) NOT NULL PRIMARY KEY,
-    ID_Admin CHAR(4) NOT NULL,
-    ID_Layanan CHAR(4) NOT NULL,
+    ID_Laporan CHAR(10) NOT NULL PRIMARY KEY,
+    ID_Admin CHAR(10) NOT NULL,
+    ID_Layanan CHAR(10) NOT NULL,
     Hasil_Laporan TEXT,
     Tanggal_Laporan DATE NOT NULL,
     FOREIGN KEY (ID_Admin) REFERENCES ADMIN(ID_Admin),
@@ -112,51 +101,51 @@ CREATE TABLE LAPORAN_LAYANAN (
     CONSTRAINT chk_tgl_laporan_layanan CHECK (Tanggal_Laporan <= CURRENT_DATE)
 );
 
--- 3. INSERT DATA DUMMY (Tanpa Password)
+-- 3. INSERT DATA DUMMY (DML)
 
--- Data MAHASISWA (NIM 11 Digit)
+-- Data MAHASISWA
 INSERT INTO MAHASISWA (NIM, Nama, Angkatan, Kontak) VALUES
-('F2000000001', 'Ani Susanti', 'F20', '081211110001'),
-('F2100000002', 'Budi Cahyo', 'F21', '081211110002'),
-('F2200000003', 'Citra Dewi', 'F22', '081211110003'),
-('F1900000004', 'Dika Pratama', 'F19', '081211110004'),
-('F2000000005', 'Eka Fitri', 'F20', '081211110005'),
-('F2100000006', 'Ferry Sanjaya', 'F21', '081211110006'),
-('F2200000007', 'Gita Mentor', 'F22', '081211110007'),
-('F2200000008', 'Hadi Mentor', 'F22', '081211110008'),
-('F2200000009', 'Indah Mentor', 'F22', '081211110009'),
-('F2200000010', 'Joko Admin', 'F22', '081211110010'),
-('F2200000011', 'Kiki Admin', 'F22', '081211110011');
+('F20000001', 'Ani Susanti', 'F20', '081211110001'),
+('F21000002', 'Budi Cahyo', 'F21', '081211110002'),
+('F22000003', 'Citra Dewi', 'F22', '081211110003'),
+('F19000004', 'Dika Pratama', 'F19', '081211110004'),
+('F20000005', 'Eka Fitri', 'F20', '081211110005'),
+('F21000006', 'Ferry Sanjaya', 'F21', '081211110006'),
+('F22000007', 'Gita Mentor', 'F22', '081211110007'),
+('F22000008', 'Hadi Mentor', 'F22', '081211110008'),
+('F22000009', 'Indah Mentor', 'F22', '081211110009'),
+('F22000010', 'Joko Admin', 'F22', '081211110010'),
+('F22000011', 'Kiki Admin', 'F22', '081211110011');
 
--- Data USER_MEMBER (U001) - Password dihapus dari Insert
-INSERT INTO USER_MEMBER (ID_User, NIM) VALUES
-('U001', 'F2000000001'),
-('U002', 'F2100000002'),
-('U003', 'F2200000003'),
-('U004', 'F1900000004'),
-('U005', 'F2000000005'),
-('U006', 'F2100000006'),
-('U007', 'F2200000007'),
-('U008', 'F2200000008'),
-('U009', 'F2200000009'),
-('U010', 'F2200000010'),
-('U011', 'F2200000011');
+-- Data USER_MEMBER (Password default '12345')
+INSERT INTO USER_MEMBER (ID_User, NIM, password) VALUES
+('U001', 'F20000001', '12345'),
+('U002', 'F21000002', '12345'),
+('U003', 'F22000003', '12345'),
+('U004', 'F19000004', '12345'),
+('U005', 'F20000005', '12345'),
+('U006', 'F21000006', '12345'),
+('U007', 'F22000007', '12345'),
+('U008', 'F22000008', '12345'),
+('U009', 'F22000009', '12345'),
+('U010', 'F22000010', '12345'),
+('U011', 'F22000011', '12345');
 
--- Data MENTOR (M001)
+-- Data MENTOR
 INSERT INTO MENTOR (ID_Mentor, ID_User, NIM, Bidang_Keahlian) VALUES
-('M001', 'U001', 'F2000000001', 'Esai & KTI'),
-('M002', 'U004', 'F1900000004', 'Design'),
-('M003', 'U007', 'F2200000007', 'Bisnis'),
-('M004', 'U008', 'F2200000008', 'KTI'),
-('M005', 'U009', 'F2200000009', 'Design');
+('M001', 'U001', 'F20000001', 'Esai & KTI'),
+('M002', 'U004', 'F19000004', 'Design'),
+('M003', 'U007', 'F22000007', 'Bisnis'),
+('M004', 'U008', 'F22000008', 'KTI'),
+('M005', 'U009', 'F22000009', 'Design');
 
--- Data ADMIN (A001)
+-- Data ADMIN
 INSERT INTO ADMIN (ID_Admin, ID_User, NIM, Jabatan) VALUES
-('A001', 'U006', 'F2100000006', 'Ketua Divisi'),
-('A002', 'U010', 'F2200000010', 'Sekbend'),
-('A003', 'U011', 'F2200000011', 'Anggota');
+('A001', 'U006', 'F21000006', 'Ketua Divisi'),
+('A002', 'U010', 'F22000010', 'Sekbend'),
+('A003', 'U011', 'F22000011', 'Anggota');
 
--- Data LAYANAN (L001)
+-- Data LAYANAN
 INSERT INTO LAYANAN (ID_Layanan, Nama_Layanan) VALUES
 ('L001', 'Review Esai'),
 ('L002', 'Review KTI'),
@@ -164,18 +153,24 @@ INSERT INTO LAYANAN (ID_Layanan, Nama_Layanan) VALUES
 ('L004', 'Review Desain'),
 ('L005', 'Bimbingan Karya');
 
--- Data KARYA (K001)
+-- Data KARYA (Dengan Link Dummy)
 INSERT INTO KARYA (ID_Karya, ID_User, Judul_Karya, Bidang_Karya, File_Karya) VALUES
-('K001', 'U002', 'Inovasi Sampah Plastik', 'KTI', 'https://drive.google.com/open?id=123'),
-('K002', 'U003', 'Strategi Pemasaran Digital', 'Bisnis', 'https://drive.google.com/open?id=456'),
-('K003', 'U002', 'Meningkatkan Kualitas Udara', 'Esai', 'https://drive.google.com/open?id=789'),
-('K004', 'U005', 'Poster Lomba Desain Grafis', 'Design', 'https://drive.google.com/open?id=abc'),
-('K005', 'U003', 'Rancangan Aplikasi Mobile', 'Design', 'https://drive.google.com/open?id=def');
+('K001', 'U002', 'Inovasi Sampah Plastik', 'KTI', 'https://drive.google.com/file/d/dummy1'),
+('K002', 'U003', 'Strategi Pemasaran Digital', 'Bisnis', 'https://drive.google.com/file/d/dummy2'),
+('K003', 'U002', 'Meningkatkan Kualitas Udara', 'Esai', 'https://drive.google.com/file/d/dummy3'),
+('K004', 'U005', 'Poster Lomba Desain Grafis', 'Design', 'https://drive.google.com/file/d/dummy4'),
+('K005', 'U003', 'Rancangan Aplikasi Mobile', 'Design', 'https://drive.google.com/file/d/dummy5');
 
--- Data PEER_REVIEW (R001)
-INSERT INTO PEER_REVIEW (ID_Review, ID_Karya, ID_Layanan, ID_User, ID_Mentor, Status_Review) VALUES
-('R001', 'K001', 'L002', 'U002', 'M001', 'Selesai'),
-('R002', 'K002', 'L003', 'U003', 'M003', 'Menunggu'),
-('R003', 'K003', 'L001', 'U002', 'M001', 'Selesai'),
-('R004', 'K004', 'L004', 'U005', 'M002', 'Selesai'),
-('R005', 'K005', 'L004', 'U003', 'M005', 'Menunggu');
+-- Data PEER_REVIEW (Denormalisasi: Hasil & Tanggal digabung)
+INSERT INTO PEER_REVIEW (ID_Review, ID_Karya, ID_Layanan, ID_User, ID_Mentor, Status_Review, Hasil_Review, Tanggal_Review) VALUES
+('R001', 'K001', 'L002', 'U002', 'M001', 'Selesai', 'Revisi minor pada bab 2, selebihnya bagus.', '2025-10-15'),
+('R002', 'K002', 'L003', 'U003', 'M003', 'Menunggu', NULL, NULL),
+('R003', 'K003', 'L001', 'U002', 'M001', 'Selesai', 'Sangat inspiratif, siap lomba.', '2025-11-01'),
+('R004', 'K004', 'L004', 'U005', 'M002', 'Selesai', 'Perbaiki kontras warna.', '2025-11-10'),
+('R005', 'K005', 'L004', 'U003', 'M005', 'Menunggu', NULL, NULL);
+
+-- Data LAPORAN_LAYANAN
+INSERT INTO LAPORAN_LAYANAN (ID_Laporan, ID_Admin, ID_Layanan, Hasil_Laporan, Tanggal_Laporan) VALUES
+('LL001', 'A001', 'L001', 'Total 10 Esai telah selesai direview bulan ini.', '2025-11-15'),
+('LL002', 'A001', 'L002', 'Ada 5 permintaan KTI baru.', '2025-11-15'),
+('LL003', 'A002', 'L003', 'Perlu tambahan mentor di bidang bisnis.', '2025-11-10');
