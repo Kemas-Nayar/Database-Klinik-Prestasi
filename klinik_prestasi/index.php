@@ -29,10 +29,5 @@
         <a href="peer_review/index.php">✅ Peer Review</a>
         <span>Pantau status review karya mahasiswa.</span>
     </div>
-
-    <div class="menu-box">
-        <a href="laporan_review/index.php">📝 Laporan Review</a>
-        <span>Lihat hasil dan feedback review karya.</span>
-    </div>
 </body>
 </html>

@@ -36,9 +36,8 @@
 <body>
     <div class="nav">
         <strong>Menu:</strong>
-        <a href="../index.php">🏠 Home</a>
+        <a href="../index.php">Home</a>
         <a href="../mahasiswa/index.php">Data Mahasiswa</a>
         <a href="../karya/index.php">Data Karya</a>
-        <a href="../peer_review/index.php">✅ Peer Review</a>
-        <a href="../laporan_review/index.php">📝 Laporan Review</a>
+        <a href="../peer_review/index.php">Peer Review</a>
     </div>
