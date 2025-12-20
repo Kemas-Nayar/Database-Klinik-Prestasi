@@ -10,7 +10,6 @@
         th { background-color: #f2f2f2; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         
-        /* Button Styles */
         .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 3px; font-size: 12px; display: inline-block; border: none; cursor: pointer; }
         .btn-green { background-color: #28a745; }
         .btn-green:hover { background-color: #218838; }
@@ -21,12 +20,10 @@
         .btn-gray { background-color: #6c757d; }
         .btn-gray:hover { background-color: #5a6268; }
 
-        /* Form Styles */
         .form-box { background: #eee; padding: 20px; border: 1px solid #ccc; max-width: 500px; border-radius: 5px; }
         input, select { padding: 8px; margin-bottom: 10px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         label { font-weight: bold; display: block; margin-bottom: 5px; margin-top: 10px; }
         
-        /* Navigation Styles */
         .nav { margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; border-radius: 5px; }
         .nav strong { margin-right: 10px; }
         .nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #007bff; }

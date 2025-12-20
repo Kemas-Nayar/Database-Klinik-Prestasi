@@ -16,17 +16,17 @@
     <p>Sistem Informasi Manajemen Data & Review</p>
 
     <div class="menu-box">
-        <a href="mahasiswa/index.php">📦 Data Mahasiswa</a>
+        <a href="mahasiswa/index.php">Data Mahasiswa</a>
         <span>Kelola data mahasiswa, angkatan, dan kontak.</span>
     </div>
 
     <div class="menu-box">
-        <a href="karya/index.php">📄 Data Karya</a>
+        <a href="karya/index.php">Data Karya</a>
         <span>Kelola judul karya, penulis, dan bidang.</span>
     </div>
 
     <div class="menu-box">
-        <a href="peer_review/index.php">✅ Peer Review</a>
+        <a href="peer_review/index.php">Peer Review</a>
         <span>Pantau status review karya mahasiswa.</span>
     </div>
 </body>

@@ -4,17 +4,14 @@ include '../config/db.php';
 $id_url = isset($_GET['id']) ? $_GET['id'] : '';
 if (empty($id_url)) { header("Location: index.php"); exit; }
 
-// PROSES UPDATE
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_old = $_POST['id_old'];
     $id_mentor = $_POST['id_mentor'];
     $status = $_POST['status'];
     
-    // Data Baru
     $hasil = $_POST['hasil'];
     $tanggal = $_POST['tanggal'];
 
-    // Jika status diubah jadi selesai tapi tanggal kosong, isi otomatis hari ini
     if ($status == 'Selesai' && empty($tanggal)) {
         $tanggal = date('Y-m-d');
     }
@@ -31,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// AMBIL DATA LAMA
 $query_get = "SELECT * FROM PEER_REVIEW WHERE ID_Review = $1";
 $data = pg_fetch_assoc(pg_query_params($conn, $query_get, array($id_url)));
 if (!$data) die("Data tidak ditemukan.");

@@ -1,41 +1,77 @@
 <?php
 include '../config/db.php';
+include '../layout/header.php';
+
+function generateIdKarya($conn) {
+    $query = "SELECT ID_Karya FROM KARYA ORDER BY ID_Karya DESC LIMIT 1";
+    $result = pg_query($conn, $query);
+    $row = pg_fetch_assoc($result);
+
+    if ($row) {
+        $lastId = $row['id_karya'];
+        $number = (int) substr($lastId, 1); 
+        $newNumber = $number + 1;
+    } else {
+        $newNumber = 1;
+    }
+
+    return 'K' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id_karya = $_POST['id_karya'];
+    $id_karya = generateIdKarya($conn);
+    
     $judul = $_POST['judul'];
     $id_user = $_POST['id_user'];
     $bidang = $_POST['bidang'];
-    $link_drive = $_POST['link_drive']; // Ambil link dari input
+    $link_drive = $_POST['link_drive']; 
 
-    if (!empty($id_karya) && !empty($judul)) {
-        // Kita simpan Link ke kolom File_Karya
+    if (!empty($judul) && !empty($id_user)) {
         $query = "INSERT INTO KARYA (ID_Karya, Judul_Karya, ID_User, Bidang_Karya, File_Karya) VALUES ($1, $2, $3, $4, $5)";
         $params = array($id_karya, $judul, $id_user, $bidang, $link_drive);
         
         $result = pg_query_params($conn, $query, $params);
 
         if ($result) {
-            echo "<script>alert('Karya berhasil ditambahkan!'); window.location='index.php';</script>";
+            echo "<script>alert('Karya berhasil ditambahkan! ID Baru: $id_karya'); window.location='index.php';</script>";
         } else {
             echo "<script>alert('Gagal: " . pg_last_error($conn) . "');</script>";
         }
+    } else {
+        echo "<script>alert('Semua field wajib diisi!');</script>";
     }
 }
-include '../layout/header.php';
+
+$query_users = "
+    SELECT U.ID_User, M.Nama, M.NIM 
+    FROM USER_MEMBER U
+    JOIN MAHASISWA M ON U.NIM = M.NIM
+    WHERE M.Status_Mhs = 'Aktif'  
+    ORDER BY M.Nama ASC
+";
+
+$result_users = pg_query($conn, $query_users);
+
+$next_id = generateIdKarya($conn);
 ?>
 
 <h2>Tambah Karya</h2>
 <div class="form-box">
     <form action="" method="POST">
         <label>ID Karya</label>
-        <input type="text" name="id_karya" required placeholder="Contoh: K001">
-
+        <input type="text" value="<?= $next_id ?>" disabled style="background-color: #eee; color: #555;">
         <label>Judul Karya</label>
         <input type="text" name="judul" required placeholder="Judul Lengkap">
 
-        <label>ID User (Penulis)</label>
-        <input type="text" name="id_user" required placeholder="Contoh: U001">
+        <label>Penulis (Mahasiswa)</label>
+        <select name="id_user" required>
+            <option value="">- Pilih Penulis -</option>
+            <?php while ($user = pg_fetch_assoc($result_users)): ?>
+                <option value="<?= $user['id_user'] ?>">
+                    <?= $user['nama'] ?> (<?= $user['nim'] ?>)
+                </option>
+            <?php endwhile; ?>
+        </select>
 
         <label>Bidang Karya</label>
         <select name="bidang" required>

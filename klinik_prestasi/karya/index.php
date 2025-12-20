@@ -14,7 +14,7 @@ include '../layout/header.php';
             <th>Judul Karya</th>
             <th>Penulis</th>
             <th>Bidang</th>
-            <th>Link Drive</th> <!-- Label diperbarui -->
+            <th>Link Drive</th> 
             <th>Aksi</th>
         </tr>
     </thead>
@@ -26,10 +26,8 @@ include '../layout/header.php';
         while ($row = pg_fetch_assoc($result)) {
             $row = array_change_key_case($row, CASE_UPPER);
             
-            // Logika Link Google Drive
             $file_link = "-";
             if (!empty($row['FILE_KARYA'])) {
-                // Langsung gunakan isi kolom sebagai href karena isinya adalah URL
                 $file_link = "<a href='" . htmlspecialchars($row['FILE_KARYA']) . "' target='_blank' style='color:blue; text-decoration:underline;'>Buka Link</a>";
             }
 

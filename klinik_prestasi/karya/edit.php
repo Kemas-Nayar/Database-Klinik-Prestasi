@@ -9,9 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $judul = $_POST['judul'];
     $id_user = $_POST['id_user'];
     $bidang = $_POST['bidang'];
-    $link_drive = $_POST['link_drive']; // Ambil link baru
+    $link_drive = $_POST['link_drive']; 
 
-    // Update query termasuk kolom File_Karya (untuk Link)
     $query = "UPDATE KARYA SET Judul_Karya=$1, ID_User=$2, Bidang_Karya=$3, File_Karya=$4 WHERE ID_Karya=$5";
     $params = array($judul, $id_user, $bidang, $link_drive, $id_old);
     
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Ambil data lama
 $query_get = "SELECT * FROM KARYA WHERE ID_Karya = $1";
 $data = pg_fetch_assoc(pg_query_params($conn, $query_get, array($id_url)));
 if (!$data) die("Data tidak ditemukan.");
@@ -56,7 +54,6 @@ include '../layout/header.php';
         </select>
 
         <label>Link Google Drive</label>
-        <!-- Menampilkan link lama di value -->
         <input type="url" name="link_drive" value="<?= isset($data['FILE_KARYA']) ? $data['FILE_KARYA'] : '' ?>" placeholder="https://drive.google.com/..." style="border: 1px solid #28a745;">
 
         <br><br>

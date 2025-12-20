@@ -4,7 +4,6 @@ include '../config/db.php';
 $id_url = isset($_GET['id']) ? $_GET['id'] : '';
 if (empty($id_url)) { header("Location: index.php"); exit; }
 
-// Ambil data lengkap berdasarkan ID
 $query = "SELECT P.*, K.Judul_Karya, K.File_Karya 
           FROM PEER_REVIEW P 
           LEFT JOIN KARYA K ON P.ID_Karya = K.ID_Karya 
@@ -21,9 +20,8 @@ include '../layout/header.php';
 
 <h2>Detail Hasil Review</h2>
 
-<div class="form-box" style="max-width: 800px;"> <!-- Box lebih lebar -->
+<div class="form-box" style="max-width: 800px;">
     
-    <!-- Informasi Dasar (Tampil Rapi) -->
     <table style="border:none; width:100%;">
         <tr style="background:none;">
             <td style="border:none; width:150px; font-weight:bold;">ID Review</td>
@@ -61,17 +59,14 @@ include '../layout/header.php';
 
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
 
-    <!-- Bagian Hasil Review Lengkap -->
-    <h3>📝 Hasil & Masukan Lengkap</h3>
+    <h3>Hasil & Masukan Lengkap</h3>
     <div style="background: #fff; padding: 15px; border: 1px solid #ccc; border-radius: 4px; min-height: 100px; white-space: pre-wrap; line-height: 1.6;">
         <?= !empty($data['HASIL_REVIEW']) ? htmlspecialchars($data['HASIL_REVIEW']) : "<em style='color:gray'>Belum ada masukan review.</em>" ?>
     </div>
 
     <br>
     <div style="text-align: right;">
-        <!-- Tombol Edit jika ingin mengubah -->
         <a href="edit.php?id=<?= $data['ID_REVIEW'] ?>" class="btn btn-blue">Edit / Update</a>
-        <!-- Tombol Kembali -->
         <a href="index.php" class="btn btn-gray">Kembali</a>
     </div>
 </div>

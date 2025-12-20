@@ -14,6 +14,7 @@ include '../layout/header.php';
             <th>Nama</th>
             <th>Angkatan</th>
             <th>Kontak</th>
+            <th>Status</th> 
             <th>Aksi</th>
         </tr>
     </thead>
@@ -23,16 +24,21 @@ include '../layout/header.php';
         $result = pg_query($conn, $query);
 
         while ($row = pg_fetch_assoc($result)) {
-            // Ubah key ke Uppercase agar konsisten jika Postgres mengembalikan lowercase
             $row = array_change_key_case($row, CASE_UPPER);
+            
+            $statusColor = ($row['STATUS_MHS'] == 'Aktif') ? 'green' : 'red';
+
             echo "<tr>";
             echo "<td>" . htmlspecialchars($row['NIM']) . "</td>";
             echo "<td>" . htmlspecialchars($row['NAMA']) . "</td>";
             echo "<td>" . htmlspecialchars($row['ANGKATAN']) . "</td>";
             echo "<td>" . htmlspecialchars($row['KONTAK']) . "</td>";
+            
+            echo "<td style='color:$statusColor; font-weight:bold;'>" . htmlspecialchars($row['STATUS_MHS']) . "</td>";
+            
             echo "<td>
                     <a href='edit.php?nim=" . $row['NIM'] . "' class='btn btn-blue'>Edit</a>
-                    <a href='delete.php?nim=" . $row['NIM'] . "' class='btn btn-red' onclick=\"return confirm('Yakin ingin menghapus data " . $row['NAMA'] . "?');\">Hapus</a>
+                    <!-- Tombol Hapus dihapus atau diberi peringatan keras -->
                   </td>";
             echo "</tr>";
         }

@@ -42,7 +42,7 @@ include '../layout/header.php';
             echo "<td style='color:#555; font-style:italic;'>" . htmlspecialchars($hasil_cut) . "</td>";
             echo "<td>
                     <!-- Tombol Lihat Detail (Baru) -->
-                    <a href='detail.php?id=" . $row['ID_REVIEW'] . "' class='btn btn-gray' title='Lihat Selengkapnya'>Lihat</a>
+                    <a href='detail.php?id=" . $row['ID_REVIEW'] . "' class='btn btn-gray' title='Lihat Selengkapnya'>👁️</a>
                     
                     <a href='edit.php?id=" . $row['ID_REVIEW'] . "' class='btn btn-blue'>Edit</a>
                     <a href='delete.php?id=" . $row['ID_REVIEW'] . "' class='btn btn-red' onclick=\"return confirm('Hapus data ini?');\">Hapus</a>
